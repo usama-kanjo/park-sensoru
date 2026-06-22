@@ -1,19 +1,20 @@
 # Park Sensoru — ESP32 Parking Sensor
 
-ESP32-based parking assistant with ultrasonic distance sensing, WiFi web dashboard, and deep sleep power saving.
+ESP32-based parking assistant with ultrasonic distance sensing, direct WiFi AP web dashboard, and deep sleep power saving.
 
 ## Features
 
 - **HC-SR04 Ultrasonic Distance Sensor** — measures 2–400 cm
 - **Potentiometer Threshold** — adjust sensitivity (10–150 cm) in real-time
 - **PWM Buzzer** — beeps faster as you get closer to an obstacle
-- **WiFiManager** — no hardcoded credentials; configure WiFi via captive portal on first boot
+- **WiFi Access Point** — ESP32 creates its own network (no router needed)
+  - SSID: `ParkSensoru`, password: `123456789`
 - **Web Dashboard** — live distance display with color-coded status (green/yellow/red)
   - WebSocket real-time updates
   - REST API at `/api`
   - Responsive mobile-friendly UI
 - **Deep Sleep** — automatically sleeps after 120 seconds of inactivity; wakes every 10 seconds to check for movement
-- **On-board LED** — visual WiFi status indicator
+- **On-board LED** — visual status indicator
 
 ## Hardware
 
@@ -44,14 +45,12 @@ pio run --target upload
 pio device monitor
 ```
 
-### First Run
+### Usage
 
-1. On first boot, if no WiFi is configured, the ESP32 starts an access point named **ParkSensoru** (no password).
-2. Connect your phone/computer to that network.
-3. Open `http://192.168.4.1` in a browser and configure your home WiFi.
-4. The ESP32 will reboot and connect to your network.
-5. Check the serial monitor or use a network scanner to find its IP.
-6. Open `http://<esp32-ip>` in any browser on the same network.
+1. Power the ESP32 — it starts an access point named **ParkSensoru** (password: `123456789`).
+2. Connect your phone/computer to that WiFi network.
+3. Open `http://192.168.4.1` in any browser.
+4. The dashboard shows real-time distance with color-coded status.
 
 ## API
 

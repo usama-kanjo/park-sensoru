@@ -1,6 +1,5 @@
 #include <Arduino.h>
 #include <WiFi.h>
-#include <WiFiManager.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <esp_sleep.h>
@@ -183,33 +182,15 @@ void setupWebServer() {
 }
 
 void setupWiFi() {
-  Serial.println("\n--- WiFi baslatiliyor ---");
+  Serial.println("\n--- AP modu baslatiliyor ---");
 
-  WiFiManager wm;
-  wm.setConfigPortalTimeout(180);
-  wm.setConnectTimeout(15);
-  wm.setSaveParamsCallback([]() {
-    Serial.println("WiFi ayarlari kaydedildi!");
-  });
+  WiFi.mode(WIFI_AP);
+  WiFi.softAP("ParkSensoru", "123456789");
+  WiFi.softAPConfig(IPAddress(192, 168, 4, 1), IPAddress(192, 168, 4, 1), IPAddress(255, 255, 255, 0));
 
   digitalWrite(LED_PIN, HIGH);
-  Serial.println("Kayitli WiFi varsa baglaniliyor, yoksa AP acilacak...");
-
-  bool baglandi = wm.autoConnect("ParkSensoru");
-
-  if (baglandi) {
-    digitalWrite(LED_PIN, HIGH);
-    Serial.print("WiFi baglandi! IP: ");
-    Serial.println(WiFi.localIP());
-    Serial.println("Tarayicinda bu IP'yi ac -> canli mesafe ekrani");
-  } else {
-    digitalWrite(LED_PIN, LOW);
-    Serial.println("---------------");
-    Serial.println("WiFi BULUNAMADI!");
-    Serial.println("Telefonundan 'ParkSensoru' agina baglan.");
-    Serial.println("Sonra tarayicinda 192.168.4.1 yaz.");
-    Serial.println("---------------");
-  }
+  Serial.println("AP aktif: 'ParkSensoru' (sifre: 123456789)");
+  Serial.println("Telefonunu bu aga bagla, tarayicinda 192.168.4.1 ac");
 }
 
 void goToDeepSleep() {
@@ -217,7 +198,6 @@ void goToDeepSleep() {
   digitalWrite(LED_PIN, LOW);
   ws.closeAll();
   server.end();
-  WiFi.disconnect(true);
   WiFi.mode(WIFI_OFF);
   delay(100);
   esp_sleep_enable_timer_wakeup(SLEEP_WAKEUP_S * 1000000ULL);
